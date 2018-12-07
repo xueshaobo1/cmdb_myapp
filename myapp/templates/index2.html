@@ -1,0 +1,313 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="content">
+	<div class="content-wrapper"> 
+	<div class="content-header">
+      <div class="container-fluid">
+        <div class="row">
+           <div class="col-lg-2 col-md-3 col-sm-2">
+		    <div class="pull-left">
+           <button type="button" data-toggle="modal" data-target="#mymodal" class="btn btn-block btn-primary btn-sm">添加设备</button>
+		   </div>
+		   <div class="pull-right">
+		   <button type="button" class="btn btn-block btn-danger btn-sm" onclick="MultiDel()">删除设备</button>
+		   </div>
+		   <div class="modal fade" id="mymodal">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						
+						<form class="from-signin" action="/add_dev/" method="POST">
+						{% csrf_token %}
+						<div class="card card-primary">
+							<div class="card-header">
+								<h3 class="card-title">添加设备</h3>
+							</div>
+							<div class="card-body">
+								<!-- Date dd/mm/yyyy -->
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">主机名</span>
+										</div>
+										<input name="hname" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">IP地址</span>
+										</div>
+										<input name="ip" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">连接协议</span>
+										</div>
+										<input name="protoclo" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask value = "SSH" disabled>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">用户名</span>
+										</div>
+										<input name="uname" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">密码</span>
+										</div>
+										<input name="password" type="password" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask >
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">端口号</span>
+										</div>
+										<input name="port" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">主机位置</span>
+										</div>
+										<input name="position" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">备注信息</span>
+										</div>
+										<input name="remarks" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask>
+									</div>
+								</div>
+						
+						
+						
+						
+							</div> 
+							<!-- /.card-body -->
+							</div> 
+							<div class="modal-footer ">
+							<button type="submit" class="btn btn-primary ">提交</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							
+							</div>
+					</form>
+					</div>
+				</div>
+			</div>
+          </div>
+        </div>
+		 <div class="row">
+			<div class="col">
+		    <table class="table table-striped text-center">
+				<thead>
+                  <tr>
+				    <th>
+                      <input id="allChecks" type="checkbox" class="i-checks" name="input[]" value="checkall" data-editable='false' onclick="ckAll()">
+                    </th>
+                    <th>主机名</th>
+                    <th>IP地址</th>
+					<th>主机位置</th>
+					<th>主机状态</th>
+					<th>备注</th>
+					<th>操作</th>
+                    </tr>
+				</thead>
+				{% for i in dev %}
+				<tbody>
+				<tr>
+				    
+				    <th>
+                      <input  type="checkbox" class="i-checks" name="input[]" value="{{i.id}}" data-editable='false' onclick="check_all('asset_form')">
+                    </th>
+                    <th>{{i.hname}}</th>
+                    <th>{{i.ip}}</th>
+					<th>{{i.position}}</th>
+					{% if i.state == 'True' %}
+						<th><span class="badge bg-success">在线</span></th>
+					{% else %}
+						<th><span class="badge bg-danger">离线</span></th>
+                                        {% endif %}
+                                        <th>{{i.remarks}}</th>
+					<th>
+					<a href="/web_ssh/"><button type="button" class="btn btn-primary">WEBSSH</button></a>
+					<button type="button" data-toggle="modal" data-target="#{{i.id}}" class="btn btn-primary ">编辑</button>
+				        {% if i.state == 'True' %}
+                                        	<button class="btn btn-primary" onclick="det_dev(id)" id="{{i.id}}"  >详情</button>
+					{% else %}
+						<button class="btn btn-primary" onclick="" disabled="disabled"  >详情</button>
+					{% endif %}
+					<button class="btn btn-danger" onclick="del_id(id)" name= "delete" id = "{{i.id}}" >删除</button>
+					
+					</th>
+					
+                    </tr>	
+				</tbody>
+				  <div class="modal fade" id="{{i.id}}">
+					<div class="modal-dialog">
+						<div class="modal-content">
+						<form class="from-signin" action="/edit_dev/" method="POST">
+						{% csrf_token %}
+						<div class="card card-primary">
+							<div class="card-header">
+								<h3 class="card-title">修改设备</h3>
+							</div>
+							<div class="card-body">
+								<!-- Date dd/mm/yyyy -->
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">主机ID</span>
+										</div>
+										<input name="id" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask value="{{i.id}}" >
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">主机名</span>
+										</div>
+										<input name="hname" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask value="{{i.hname}}">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">IP地址</span>
+										</div>
+										<input name="ip" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask value="{{i.ip}}">
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">连接协议</span>
+										</div>
+										<input name="protoclo" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask value = "SSH" disabled>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">用户名</span>
+										</div>
+										<input name="uname" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask value="{{i.uname}}">
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">密码</span>
+										</div>
+										<input name="password" type="password" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask value="{{i.password}}">
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">端口号</span>
+										</div>
+										<input name="port" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask value="{{i.port}}">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">主机位置</span>
+										</div>
+										<input name="position" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask value="{{i.position}}">
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+										<span class="input-group-text">备注信息</span>
+										</div>
+										<input name="remarks" type="text" class="form-control"data-inputmask='"mask": "(999) 999-9999"' data-mask value="{{i.remarks}}">
+									</div>
+								</div>
+						
+							</div> 
+							<!-- /.card-body -->
+							</div> 
+							<div class="modal-footer ">
+							<button type="submit" class="btn btn-primary ">提交</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							</form>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				        {% endfor %}
+			</table>
+				
+		</div>
+      </div>
+    </div>
+	</div>
+	</div>
+	</section>
+
+<script>
+function ckAll(){
+            var flag = document.getElementById("allChecks").checked;
+            var cks = document.getElementsByName("input[]");
+            for(var i=0;i<cks.length;i++){
+                cks[i].checked=flag;
+            }
+        }
+function MultiDel(){
+            if(!confirm("确定删除这些吗?")){
+                return;
+            }
+            var cks=document.getElementsByName("input[]");
+            var str = "";
+            //拼接所有的id
+            for(var i=0;i<cks.length;i++){
+                if(cks[i].checked){
+                    str+=cks[i].value+",";
+                }
+            }
+            //去掉字符串未尾的','
+            str=str.substring(0, str.length-1);
+            location.href='/del_dev?id='+str;
+        }
+function del_id(id){
+            if(!confirm("确定删除这些吗?")){
+                return;
+            }
+            
+            var str = "";
+            
+			str = id;
+            //str=str.substring(0, str.length-1);
+            location.href='/del_dev?id='+str;
+        }
+function det_dev(id){
+            
+            var str = "";
+            
+            str = id;
+            location.href='/det_dev?id='+str;
+        }
+
+
+</script>
+
+{% endblock %}

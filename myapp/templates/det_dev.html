@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% block content %}
+{%load staticfiles%}
+<script src="{% static 'js/echarts.common.min.js' %}"></script>
+
+<section class="content">
+	<div class="content-wrapper">
+	<div class="content-header">
+      <div class="container-fluid">
+		<h1>AUTO-APP</h1><br>
+         <div class="row">
+		 <div class="col-sm-12">
+			<table class="table table-striped text-center">
+				<thead>
+                   <tr>
+                    <th>主机名</th>
+                    <th>IP地址</th>
+					<th>连接协议</th>
+					<th>端口号</th>
+					<th>用户名</th>
+					<th>机房位置</th>
+					<th>备注信息</th>
+                    </tr>
+					
+				</thead>
+				<tbody>
+				<tr>
+				    
+                    <th>{{dev.hname}}</th>
+                    <th>{{dev.ip}}</th>
+					<th>{{dev.protoclo}}</th>
+					<th>{{dev.port}}</th>
+					<th>{{dev.uname}}</th>
+					<th>{{dev.position}}</th>
+					<th>{{dev.remarks}}</th>
+					
+				</tr>
+				</tbody>
+				</table>
+				<table class="table table-striped text-center">
+				</thead>
+				<tr>
+					<th>cpu型号</th>
+					<th>内存大小</th>
+					<th>硬盘大小</th>
+					<th>网口数量</th>
+					<th>操作系统</th>
+				</tr>
+				<thead>
+				<tbody>
+				<tr>
+					<th>{{cpu_v}}</th>
+					<th>{{mem}}M</th>
+					<th>{{dist}}M</th>
+					<th>{{network}}</th>
+					<th>{{os_v}}</th>
+				</tr>
+				</tbody>
+				</table> 
+				  
+		 </div>
+		 </div>
+		 
+				<div class="row">
+				<div class="col-sm-12">
+					<div class="card card-primary">
+					<div class="card-header">
+					<h3 class="card-title">状态信息</h3>
+
+					<div class="card-tools">
+						<button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+						</button>
+						<button type="button" class="btn btn-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+					</div>
+					</div>
+					<div class="card-body">
+					<div class="chart">
+						<div class="row">
+						<div class="col-sm-4">
+							<div id="cpu" style="height:400px;"></div>
+						</div>
+						<div class="col-sm-4">
+							<div id="memori" style="height:400px;"></div>
+						</div>
+						<div class="col-sm-4">
+							<div id="disk" style="height:400px;"></div>
+						</div>
+						</div>
+					</div>
+					</div>
+				</div>
+				</div>
+				</div>
+		 
+                </div>
+			  </div>
+              </div>
+              </div>
+		 </div>
+		
+	
+	  
+	
+    </div>
+	</div>
+	</section>
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('cpu'));
+				
+					
+		var option = {
+			title : {
+				text: 'CPU',
+				subtext: '',
+				x:'center'
+			},
+			tooltip : {
+				trigger: 'item',
+				formatter: "{a} <br/>{b} : {c} ({d}%)"
+			},
+			legend: {
+				orient: 'vertical',
+				left: 'left',
+				data: ['占用','空闲']
+			},
+			series : [
+				{
+					name: '服务器',
+					type: 'pie',
+					radius : '55%',
+					center: ['50%', '60%'],
+					data:[
+						{value:{{cpu_off}}, name:'占用'},
+						{value:{{cpu_on}}, name:'空闲'},
+						
+					],
+					itemStyle: {
+						emphasis: {
+							shadowBlur: 10,
+							shadowOffsetX: 0,
+							shadowColor: 'rgba(0, 0, 0, 0.5)'
+						}
+					}
+				}
+			]
+		};			
+
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    
+	
+	var myChart = echarts.init(document.getElementById('memori'));
+				
+					// 指定图表的配置项和数据
+		var option = {
+			title : {
+				text: '内存',
+				subtext: '',
+				x:'center'
+			},
+			tooltip : {
+				trigger: 'item',
+				formatter: "{a} <br/>{b} : {c} ({d}%)"
+			},
+			legend: {
+				orient: 'vertical',
+				left: 'left',
+				data: ['占用','空闲',]
+			},
+			series : [
+				{
+					name: '服务器',
+					type: 'pie',
+					radius : '55%',
+					center: ['50%', '60%'],
+					data:[
+						{value:{{mem_off}}, name:'占用'},
+						{value:{{mem_on}}, name:'空闲'},
+						
+					],
+					itemStyle: {
+						emphasis: {
+							shadowBlur: 10,
+							shadowOffsetX: 0,
+							shadowColor: 'rgba(0, 0, 0, 0.5)'
+						}
+					}
+				}
+			]
+		};			
+
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+		
+		
+		
+		var myChart = echarts.init(document.getElementById('disk'));
+				
+					// 指定图表的配置项和数据
+		var option = {
+			title : {
+				text: '硬盘',
+				subtext: '',
+				x:'center'
+			},
+			tooltip : {
+				trigger: 'item',
+				formatter: "{a} <br/>{b} : {c} ({d}%)"
+			},
+			legend: {
+				orient: 'vertical',
+				left: 'left',
+				data: ['占用','空闲',]
+			},
+			series : [
+				{
+					name: '服务器',
+					type: 'pie',
+					radius : '55%',
+					center: ['50%', '60%'],
+					data:[
+						{value:{{dis_off}}, name:'占用'},
+						{value:{{dis_on}}, name:'空闲'},
+						
+					],
+					itemStyle: {
+						emphasis: {
+							shadowBlur: 10,
+							shadowOffsetX: 0,
+							shadowColor: 'rgba(0, 0, 0, 0.5)'
+						}
+					}
+				}
+			]
+		};			
+
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+		
+ </script>	
+
+
+
+
+
+
+{% endblock %}
